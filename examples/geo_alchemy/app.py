@@ -1,5 +1,4 @@
 from flask import Flask
-from flask_babel import Babel
 from flask_sqlalchemy import SQLAlchemy
 
 import flask_admin as admin
@@ -11,7 +10,6 @@ from flask_admin.contrib.geoa import ModelView
 
 # Create application
 app = Flask(__name__)
-babel = Babel(app)
 app.config.from_pyfile('config.py')
 db = SQLAlchemy(app)
 
@@ -60,17 +58,27 @@ def index():
 # Create admin
 admin = admin.Admin(app, name='Example: GeoAlchemy', theme=Bootstrap4Theme())
 
+
+class LeafletModelView(ModelView):
+    edit_modal = True
+
+
+class OSMModelView(ModelView):
+    tile_layer_url = '{s}.tile.openstreetmap.org/{z}/{x}/{y}.png'
+    tile_layer_attribution = '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+
 # Add views
-admin.add_view(ModelView(Point, db.session, category='Points'))
-admin.add_view(ModelView(MultiPoint, db.session, category='Points'))
-admin.add_view(ModelView(Polygon, db.session, category='Polygons'))
-admin.add_view(ModelView(MultiPolygon, db.session, category='Polygons'))
-admin.add_view(ModelView(LineString, db.session, category='Lines'))
-admin.add_view(ModelView(MultiLineString, db.session, category='Lines'))
+admin.add_view(LeafletModelView(Point, db.session, category='Points'))
+admin.add_view(OSMModelView(MultiPoint, db.session, category='Points'))
+admin.add_view(LeafletModelView(Polygon, db.session, category='Polygons'))
+admin.add_view(OSMModelView(MultiPolygon, db.session, category='Polygons'))
+admin.add_view(LeafletModelView(LineString, db.session, category='Lines'))
+admin.add_view(OSMModelView(MultiLineString, db.session, category='Lines'))
 
 if __name__ == '__main__':
 
-    db.create_all()
+    with app.app_context():
+        db.create_all()
 
     # Start app
     app.run(debug=True)

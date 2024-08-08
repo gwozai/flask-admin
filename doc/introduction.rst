@@ -6,7 +6,38 @@ Introduction To Flask-Admin
 Getting Started
 ===============
 
-****
+Installing Flask-Admin
+----------------------
+
+Flask-Admin provides an easy-to-use layer on top of a number of databases and file stores.
+Whether you use SQLAlchemy, peewee, AWS S3, or something else that Flask-Admin supports,
+we don't install those things out-of-the-box. This reduces the risk of compatibility issues
+and means that you don't download/install anything you don't need.
+
+Depending on what you use, you should install Flask-Admin with your required extras selected.
+
+Flask-Admin has these optional extras you can select:
+
+=========================== ================================================
+Extra name                  What functionality does this add to Flask-Admin?
+=========================== ================================================
+sqlalchemy                  SQLAlchemy, for accessing many database engines
+sqlalchemy-with-utils       As above, with some additional utilities for different data types
+geoalchemy                  As with SQLAlchemy, but adding support for geographic data and maps
+pymongo                     Supports the PyMongo library
+peewee                      Supports the peewee library
+s3                          Supports file admin using AWS S3
+azure-blob-storage          Supports file admin using Azure blob store
+images                      Allows working with image data
+export                      Supports downloading data in a variety of formats (eg TSV, JSON, etc)
+rediscli                    Allows Flask-Admin to display a CLI for Redis
+translation                 Supports translating Flask-Admin into a number of languages
+all                         Installs support for all features
+=========================== ================================================
+
+Once you've chosen the extras you need, install Flask-Admin by specifying them like so::
+
+    pip install flask-admin[sqlalchemy,s3,images,export,translation]
 
 Initialization
 --------------
@@ -72,8 +103,6 @@ So, now you can add any content to the index page, while maintaining a consisten
 
 Authorization & Permissions
 ===========================
-
-****
 
 When setting up an admin interface for your application, one of the first problems
 you'll want to solve is how to keep unwanted users out. With Flask-Admin there
@@ -153,9 +182,7 @@ approach for including the other views, like `forgot_password`, `send_confirmati
 .. _customizing-builtin-views:
 
 Customizing Built-in Views
-=========================
-
-****
+==========================
 
 When inheriting from `ModelView`, values can be specified for numerous
 configuration parameters. Use these to customize the views to suit your
@@ -310,8 +337,6 @@ And to add arbitrary hyperlinks to the menu::
 Adding Your Own Views
 =====================
 
-****
-
 For situations where your requirements are really specific and you struggle to meet
 them with the built-in :class:`~flask_admin.model.ModelView` class, Flask-Admin makes it easy for you to
 take full control and add your own views to the interface.
@@ -346,7 +371,7 @@ By extending the *admin/master.html* template, you can maintain a consistent use
 even while having tight control over your page's content.
 
 Overriding the Built-in Views
-----------------------------
+-----------------------------
 There may be some scenarios where you want most of the built-in ModelView
 functionality, but you want to replace one of the default `create`, `edit`, or `list` views.
 For this you could override only the view in question, and all the links to it will still function as you would expect::
@@ -365,16 +390,14 @@ For this you could override only the view in question, and all the links to it w
         return self.render('create_user.html')
 
 Working With the Built-in Templates
-==================================
-
-****
+===================================
 
 Flask-Admin uses the `Jinja2 <http://jinja.pocoo.org/docs/>`_ templating engine.
 
 .. _extending-builtin-templates:
 
 Extending the Built-in Templates
--------------------------------
+--------------------------------
 
 Rather than overriding the built-in templates completely, it's best to extend them. This
 will make it simpler for you to upgrade to new Flask-Admin versions in future.
@@ -413,7 +436,7 @@ the admin theme during initialization::
     admin = Admin(app, Bootstrap4Theme(base_template='microblog_master.html'))
 
 Overriding the Built-in Templates
---------------------------------
+---------------------------------
 
 To take full control over the style and layout of the admin interface, you can override
 all of the built-in templates. Just keep in mind that the templates will change slightly
@@ -467,17 +490,18 @@ empty_list_message      Message that will be displayed if there are no models fo
 Have a look at the `layout` example at https://github.com/flask-admin/flask-admin/tree/master/examples/custom-layout
 to see how you can take full stylistic control over the admin interface.
 
-Environment Variables
----------------------
+Template Context Variables
+--------------------------
 
 While working in any of the templates that extend `admin/master.html`, you have access to a small number of
-environment variables:
+context variables:
 
 ==================== ================================
 Variable Name        Description
 ==================== ================================
 admin_view           Current administrative view
 admin_base_template  Base template name
+theme                The Theme configuration passed into Flask-Admin at instantiation
 _gettext             Babel gettext
 _ngettext            Babel ngettext
 h                    Helpers from :mod:`~flask_admin.helpers` module
